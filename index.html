@@ -557,6 +557,151 @@
       .actions{flex-direction:column}
       .btn{width:100%}
     }
+
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(19,16,27,.48);
+      backdrop-filter:blur(7px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:100;
+    }
+
+    .modal-backdrop.show{display:flex}
+
+    .research-modal{
+      width:min(100%,560px);
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:0 28px 80px rgba(20,14,36,.28);
+      padding:24px;
+      animation:modalIn .22s ease;
+    }
+
+    @keyframes modalIn{
+      from{opacity:0;transform:translateY(10px) scale(.985)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+
+    .modal-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+    }
+
+    .modal-icon{
+      width:46px;
+      height:46px;
+      border-radius:15px;
+      display:grid;
+      place-items:center;
+      background:var(--purple-soft);
+      color:var(--purple-dark);
+      font-size:1.2rem;
+      flex:0 0 46px;
+    }
+
+    .modal-title-wrap{
+      display:flex;
+      gap:13px;
+      align-items:flex-start;
+    }
+
+    .modal-title{
+      margin:0;
+      font-size:1.25rem;
+      letter-spacing:-.025em;
+    }
+
+    .modal-subtitle{
+      margin:5px 0 0;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:.92rem;
+    }
+
+    .modal-close{
+      border:1px solid var(--line);
+      background:var(--surface-2);
+      color:var(--muted);
+      width:36px;
+      height:36px;
+      border-radius:12px;
+      cursor:pointer;
+      flex:0 0 36px;
+    }
+
+    .research-topic{
+      margin-top:18px;
+      padding:14px 15px;
+      border-radius:16px;
+      background:var(--surface-2);
+      border:1px solid var(--line);
+    }
+
+    .research-topic small{
+      display:block;
+      color:var(--muted);
+      margin-bottom:5px;
+    }
+
+    .research-topic strong{
+      display:block;
+      line-height:1.5;
+    }
+
+    .modal-checklist{
+      display:grid;
+      gap:10px;
+      margin:18px 0 0;
+    }
+
+    .modal-check{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:var(--text);
+      line-height:1.5;
+      font-size:.92rem;
+    }
+
+    .modal-check span:first-child{
+      color:#4caf7c;
+      font-weight:700;
+    }
+
+    .modal-note{
+      margin-top:17px;
+      padding:13px 14px;
+      border-radius:14px;
+      background:var(--purple-soft);
+      color:var(--purple-dark);
+      font-size:.86rem;
+      line-height:1.55;
+    }
+
+    .modal-actions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:20px;
+    }
+
+    .modal-actions .btn{
+      min-width:130px;
+    }
+
+    @media(max-width:640px){
+      .research-modal{padding:20px;border-radius:20px}
+      .modal-actions{flex-direction:column-reverse}
+      .modal-actions .btn{width:100%}
+    }
+
   </style>
 </head>
 <body>
@@ -663,7 +808,7 @@
           </div>
 
           <div class="actions">
-            <button class="btn primary research-btn" data-topic="Autodesk AI Assistant and CAD market impact">Deep Research</button>
+            <button class="btn primary research-btn" data-topic="Autodesk AI Assistant and CAD market impact">Continue Analysis</button>
             <button class="btn soft save-btn">Save Insight</button>
             <button class="btn ghost source-btn">Open Source</button>
           </div>
@@ -686,7 +831,7 @@
           </div>
 
           <div class="actions">
-            <button class="btn primary research-btn" data-topic="AutoCAD price increase and ZWCAD promotion impact in Thailand">Deep Research</button>
+            <button class="btn primary research-btn" data-topic="AutoCAD price increase and ZWCAD promotion impact in Thailand">Continue Analysis</button>
             <button class="btn soft save-btn">Save Insight</button>
             <button class="btn ghost source-btn">Open Source</button>
           </div>
@@ -709,7 +854,7 @@
           </div>
 
           <div class="actions">
-            <button class="btn primary research-btn" data-topic="AI CAD versus CAD automation content opportunity">Deep Research</button>
+            <button class="btn primary research-btn" data-topic="AI CAD versus CAD automation content opportunity">Continue Analysis</button>
             <button class="btn soft save-btn">Save Idea</button>
             <button class="btn ghost source-btn">View Signals</button>
           </div>
@@ -752,6 +897,44 @@
 
     <div class="footer">Jam doesn’t collect news. Jam tells you what to do next.</div>
   </main>
+
+
+  <div class="modal-backdrop" id="researchModal" aria-hidden="true">
+    <div class="research-modal" role="dialog" aria-modal="true" aria-labelledby="researchModalTitle">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <div class="modal-icon">🧠</div>
+          <div>
+            <h2 class="modal-title" id="researchModalTitle">Continue Analysis</h2>
+            <p class="modal-subtitle">คุณแจมเตรียม Research Brief สำหรับประเด็นนี้ไว้แล้วค่ะ</p>
+          </div>
+        </div>
+        <button class="modal-close" id="modalCloseBtn" aria-label="Close">×</button>
+      </div>
+
+      <div class="research-topic">
+        <small>Research topic</small>
+        <strong id="modalTopicText">Market Intelligence Research</strong>
+      </div>
+
+      <div class="modal-checklist">
+        <div class="modal-check"><span>✓</span><span>Research objective และบริบทของข่าว</span></div>
+        <div class="modal-check"><span>✓</span><span>คู่แข่งและประเด็นที่เกี่ยวข้อง</span></div>
+        <div class="modal-check"><span>✓</span><span>กรอบวิเคราะห์ผลกระทบ โอกาส และความเสี่ยง</span></div>
+        <div class="modal-check"><span>✓</span><span>รูปแบบผลลัพธ์ที่พร้อมนำไปใช้ต่อ</span></div>
+      </div>
+
+      <div class="modal-note">
+        ระบบจะคัดลอก Prompt ที่คุณแจมเตรียมไว้ และเปิด ChatGPT ด้วยบัญชีของคุณ จากนั้นวาง Prompt แล้วกดส่งเพื่อเริ่มวิเคราะห์ต่อได้เลยค่ะ
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn ghost" id="modalCancelBtn">Cancel</button>
+        <button class="btn primary" id="openChatGPTBtn">Open in ChatGPT</button>
+      </div>
+    </div>
+  </div>
+
 
   <div class="toast" id="toast"></div>
 
@@ -806,27 +989,81 @@
       });
     });
 
-    document.querySelectorAll('.research-btn').forEach(btn=>{
-      btn.addEventListener('click',async()=>{
-        const topic = btn.dataset.topic;
-        const prompt = `ทำ mini market research เชิงลึกจากประเด็นนี้: ${topic}
+    const researchModal = document.getElementById('researchModal');
+    const modalTopicText = document.getElementById('modalTopicText');
+    const openChatGPTBtn = document.getElementById('openChatGPTBtn');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalCancelBtn = document.getElementById('modalCancelBtn');
+    let currentResearchPrompt = '';
 
-กรุณาค้นเว็บจริงและอ้างอิงแหล่งข้อมูล
-วิเคราะห์:
-1. สิ่งที่เกิดขึ้นล่าสุด
-2. ผลกระทบต่อตลาด CAD/BIM
-3. ผลต่อ GstarCAD Thailand / AppliCAD
-4. คู่แข่งกำลังวาง positioning อย่างไร
-5. Opportunity, Risk และ Recommended Action
-6. เสนอ Content Angles ที่นำไปใช้ได้จริง`;
-        try{
-          await navigator.clipboard.writeText(prompt);
-          showToast('คัดลอก Research Prompt แล้วค่ะ');
-        }catch(e){
-          showToast('Research Prompt พร้อมใช้งานค่ะ');
-        }
-        window.open('https://chatgpt.com/','_blank','noopener,noreferrer');
+    function closeResearchModal(){
+      researchModal.classList.remove('show');
+      researchModal.setAttribute('aria-hidden','true');
+    }
+
+    function buildResearchPrompt(topic){
+      return `Prepared by Jam — Market Intelligence Assistant
+
+Research Topic:
+${topic}
+
+Research Objective:
+วิเคราะห์ประเด็นนี้เชิงลึกจากข้อมูลล่าสุดบนเว็บ และประเมินผลกระทบต่อธุรกิจการตลาดในประเทศไทย
+
+Please search the web and provide:
+1. Executive Summary
+2. Latest verified developments
+3. Competitor comparison
+4. Impact on CAD/BIM market in Thailand
+5. Impact on GstarCAD Thailand / AppliCAD
+6. Customer implications
+7. Opportunities and risks
+8. Recommended marketing actions
+9. Suggested content angles
+10. References and official sources
+
+Important:
+- Use current web sources.
+- Prioritize official and primary sources.
+- Clearly separate verified facts from inference.
+- Keep the output practical for a Marketing Manager.`;
+    }
+
+    document.querySelectorAll('.research-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const topic = btn.dataset.topic || 'Market Intelligence Research';
+        currentResearchPrompt = buildResearchPrompt(topic);
+        modalTopicText.textContent = topic;
+        researchModal.classList.add('show');
+        researchModal.setAttribute('aria-hidden','false');
       });
+    });
+
+    openChatGPTBtn.addEventListener('click',async()=>{
+      try{
+        await navigator.clipboard.writeText(currentResearchPrompt);
+        showToast('คัดลอก Prompt ที่คุณแจมเตรียมไว้แล้วค่ะ');
+      }catch(e){
+        showToast('Prompt พร้อมใช้งานค่ะ');
+      }
+
+      window.open('https://chatgpt.com/','_blank','noopener,noreferrer');
+      closeResearchModal();
+    });
+
+    modalCloseBtn.addEventListener('click',closeResearchModal);
+    modalCancelBtn.addEventListener('click',closeResearchModal);
+
+    researchModal.addEventListener('click',(event)=>{
+      if(event.target === researchModal){
+        closeResearchModal();
+      }
+    });
+
+    document.addEventListener('keydown',(event)=>{
+      if(event.key === 'Escape'){
+        closeResearchModal();
+      }
     });
   </script>
 </body>
