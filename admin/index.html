@@ -1,61 +1,164 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Jam Admin</title>
-<style>
-body{margin:0;font-family:Inter,Arial,sans-serif;background:#f4f5fa}
-.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
-aside{background:#1f1d2b;color:#fff;padding:24px}
-aside a{display:block;color:#ddd;text-decoration:none;padding:10px 0}
-main{padding:28px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
-.card{background:#fff;border:1px solid #e9e9f3;border-radius:18px;padding:18px}
-table{width:100%;border-collapse:collapse}
-td,th{padding:10px;border-bottom:1px solid #eee;text-align:left}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jam Admin — Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f5f3fa;--surface:#fff;--surface-2:#faf8ff;--text:#25222e;--muted:#7b7488;--line:#e9e4f1;--purple:#8168f2;--purple-dark:#654bd2;--purple-soft:#f0ebff;--green:#45a978;--red:#d95774;--amber:#d8942e;--shadow:0 14px 42px rgba(72,52,116,.08)}
+    *{box-sizing:border-box}body{margin:0;font-family:"Inter","Noto Sans Thai",sans-serif;background:var(--bg);color:var(--text)}button,input,textarea,select{font:inherit}
+    .layout{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+    .sidebar{background:#1f1c2b;color:#fff;padding:22px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+    .brand{display:flex;align-items:center;gap:11px;padding:0 8px 22px}.brand-mark{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(145deg,#ad96ff,var(--purple));font-weight:700}.brand small{display:block;color:#aaa2bd;margin-top:3px}
+    .nav{display:grid;gap:6px}.nav button{border:0;background:transparent;color:#cfc9db;text-align:left;padding:11px 12px;border-radius:12px;cursor:pointer}.nav button:hover,.nav button.active{background:#312b44;color:#fff}
+    .sidebar-footer{margin-top:auto;padding:16px 8px 0;color:#aaa2bd;font-size:.8rem}.sidebar-footer a{color:#cfc4ff}
+    .main{padding:24px;min-width:0}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}.topbar h1{margin:0;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.04em}.top-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{border:0;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer}.btn.primary{background:var(--purple);color:#fff}.btn.soft{background:var(--purple-soft);color:var(--purple-dark)}.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--muted)}
+    .panel{display:none}.panel.active{display:block}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow)}.stat strong{display:block;font-size:1.5rem;margin-top:8px}.muted{color:var(--muted)}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px}.section-head h2{margin:0;font-size:1.2rem}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.list{display:grid;gap:10px}
+    .row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);background:var(--surface-2);border-radius:14px;padding:13px}.row-title{font-weight:600}.row-meta{font-size:.82rem;color:var(--muted);margin-top:4px}.row-actions{display:flex;gap:7px}.icon-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 9px;cursor:pointer}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}label{font-size:.82rem;font-weight:600}
+    input,textarea,select{width:100%;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:11px;padding:10px 11px;outline:none}textarea{min-height:150px;resize:vertical;line-height:1.55}input:focus,textarea:focus,select:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(129,104,242,.10)}
+    .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}.badge{display:inline-block;padding:5px 8px;border-radius:999px;font-size:.72rem;font-weight:700}.badge.green{background:#e9f8f1;color:var(--green)}.badge.amber{background:#fff6e6;color:var(--amber)}.badge.purple{background:var(--purple-soft);color:var(--purple-dark)}
+    table{width:100%;border-collapse:collapse}th,td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:.9rem}th{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(20,16,29,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}.modal-backdrop.show{display:flex}.modal{width:min(100%,620px);background:#fff;border-radius:22px;border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.25);padding:20px}.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}.modal-head h3{margin:0}.close{border:1px solid var(--line);background:#fff;border-radius:10px;width:34px;height:34px;cursor:pointer}
+    .toast{position:fixed;right:20px;bottom:20px;background:#211d29;color:#fff;padding:12px 15px;border-radius:13px;opacity:0;transform:translateY(20px);transition:.22s;pointer-events:none}.toast.show{opacity:1;transform:translateY(0)}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.nav{grid-template-columns:repeat(4,minmax(0,1fr));overflow:auto}.nav button{white-space:nowrap}.sidebar-footer{display:none}.stats{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}}
+    @media(max-width:620px){.main{padding:16px}.stats{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.topbar{align-items:flex-start;flex-direction:column}.nav{grid-template-columns:repeat(2,minmax(0,1fr))}.row{grid-template-columns:1fr}.row-actions{justify-content:flex-end}}
+  </style>
 </head>
 <body>
 <div class="layout">
-<aside>
-<h2>Jam Admin</h2>
-<a href="#">Dashboard</a>
-<a href="#">Sources</a>
-<a href="#">Competitors</a>
-<a href="#">Keywords</a>
-<a href="#">Prompt Templates</a>
-<a href="#">Schedules</a>
-<a href="#">History</a>
-<a href="#">Settings</a>
-</aside>
-<main>
-<h1>Jam Control Center</h1>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">J</div><div><strong>Jam Admin</strong><small>Control Center</small></div></div>
+    <nav class="nav">
+      <button class="active" data-panel="dashboard">Dashboard</button>
+      <button data-panel="sources">Sources</button>
+      <button data-panel="competitors">Competitors</button>
+      <button data-panel="keywords">Keywords</button>
+      <button data-panel="prompts">Prompt Templates</button>
+      <button data-panel="schedules">Schedules</button>
+      <button data-panel="history">History</button>
+      <button data-panel="settings">Settings</button>
+    </nav>
+    <div class="sidebar-footer"><a href="../">← กลับไป Jam Workspace</a></div>
+  </aside>
 
-<div class="grid">
-<div class="card"><b>Status</b><br>🟢 Online</div>
-<div class="card"><b>Sources</b><br>27</div>
-<div class="card"><b>Competitors</b><br>8</div>
-<div class="card"><b>Morning Brief</b><br>08:05</div>
+  <main class="main">
+    <div class="topbar">
+      <div><div class="muted">Jam Control Center</div><h1 id="pageTitle">Dashboard</h1></div>
+      <div class="top-actions"><button class="btn ghost" id="exportBtn">Export JSON</button><button class="btn primary" id="saveAllBtn">Save All</button></div>
+    </div>
+
+    <section class="panel active" id="panel-dashboard">
+      <div class="stats">
+        <div class="card stat"><span class="muted">Status</span><strong>🟢 Online</strong></div>
+        <div class="card stat"><span class="muted">Sources</span><strong id="statSources">0</strong></div>
+        <div class="card stat"><span class="muted">Competitors</span><strong id="statCompetitors">0</strong></div>
+        <div class="card stat"><span class="muted">Last Brief</span><strong>08:05</strong></div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><div class="section-head"><h2>Today's Jobs</h2><span class="badge green">Running</span></div>
+          <table><tr><th>Job</th><th>Status</th></tr><tr><td>Market Scan</td><td>✅ Completed</td></tr><tr><td>Morning Brief</td><td>✅ Sent to Jen</td></tr><tr><td>Breaking Alert</td><td>🟡 Monitoring</td></tr></table>
+        </div>
+        <div class="card"><div class="section-head"><h2>Quick Summary</h2></div><p class="muted">เพิ่มและแก้ Sources, Competitors, Keywords และ Prompt Templates ได้จากเมนูด้านซ้าย</p><button class="btn soft" data-jump="prompts">Edit Research Prompt</button></div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-sources"><div class="card"><div class="section-head"><div><h2>Sources</h2><div class="muted">เว็บไซต์ Blog Pricing Page และ Newsroom</div></div><button class="btn primary add-btn" data-type="sources">+ Add Source</button></div><div class="list" id="sourcesList"></div></div></section>
+    <section class="panel" id="panel-competitors"><div class="card"><div class="section-head"><div><h2>Competitors</h2><div class="muted">รายชื่อคู่แข่งและแบรนด์ที่ต้องติดตาม</div></div><button class="btn primary add-btn" data-type="competitors">+ Add Competitor</button></div><div class="list" id="competitorsList"></div></div></section>
+    <section class="panel" id="panel-keywords"><div class="card"><div class="section-head"><div><h2>Keywords</h2><div class="muted">ประเด็นที่ต้องการให้คุณแจมจับตา</div></div><button class="btn primary add-btn" data-type="keywords">+ Add Keyword</button></div><div class="list" id="keywordsList"></div></div></section>
+
+    <section class="panel" id="panel-prompts">
+      <div class="grid-2">
+        <div class="card"><div class="section-head"><h2>Morning Brief Prompt</h2><span class="badge purple">Automatic</span></div><textarea id="morningPrompt"></textarea><div class="form-actions"><button class="btn primary save-prompt" data-key="morningPrompt">Save Prompt</button></div></div>
+        <div class="card"><div class="section-head"><h2>Breaking Alert Prompt</h2><span class="badge amber">High Impact</span></div><textarea id="alertPrompt"></textarea><div class="form-actions"><button class="btn primary save-prompt" data-key="alertPrompt">Save Prompt</button></div></div>
+        <div class="card"><div class="section-head"><h2>Continue Analysis Prompt</h2><span class="badge purple">ChatGPT</span></div><textarea id="researchPrompt"></textarea><div class="form-actions"><button class="btn primary save-prompt" data-key="researchPrompt">Save Prompt</button></div></div>
+        <div class="card"><div class="section-head"><h2>Suggested Actions Prompt</h2></div><textarea id="actionPrompt"></textarea><div class="form-actions"><button class="btn primary save-prompt" data-key="actionPrompt">Save Prompt</button></div></div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-schedules"><div class="card"><div class="section-head"><h2>Schedules & Alerts</h2></div><div class="form-grid">
+      <div class="field"><label>Morning Brief Time</label><input type="time" id="briefTime"></div>
+      <div class="field"><label>Monitoring End Time</label><input type="time" id="monitorEnd"></div>
+      <div class="field"><label>Breaking Alert Threshold</label><select id="alertThreshold"><option value="high">High Impact only</option><option value="medium">High + Medium</option></select></div>
+      <div class="field"><label>Send through Jen</label><select id="sendJen"><option value="yes">Yes</option><option value="no">No</option></select></div>
+    </div><div class="form-actions"><button class="btn primary" id="saveScheduleBtn">Save Schedule</button></div></div></section>
+
+    <section class="panel" id="panel-history"><div class="card"><div class="section-head"><h2>Brief & Alert History</h2><button class="btn ghost" id="clearHistoryBtn">Clear History</button></div><table><thead><tr><th>Date</th><th>Type</th><th>Summary</th><th>Status</th></tr></thead><tbody id="historyBody"></tbody></table></div></section>
+
+    <section class="panel" id="panel-settings"><div class="card"><div class="section-head"><h2>System Settings</h2></div><div class="form-grid">
+      <div class="field"><label>Workspace Name</label><input id="workspaceName"></div>
+      <div class="field"><label>Analyst Name</label><input id="analystName"></div>
+      <div class="field full"><label>Apps Script Web App URL</label><input id="appsScriptUrl" placeholder="https://script.google.com/macros/s/.../exec"></div>
+      <div class="field full"><label>Jam Workspace URL</label><input id="workspaceUrl"></div>
+      <div class="field"><label>LINE Notification</label><select id="lineEnabled"><option value="yes">Enabled</option><option value="no">Disabled</option></select></div>
+      <div class="field"><label>Theme</label><select id="themeSetting"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div>
+    </div><div class="form-actions"><button class="btn primary" id="saveSettingsBtn">Save Settings</button></div></div></section>
+  </main>
 </div>
 
-<div class="card" style="margin-top:18px">
-<h2>Today's Jobs</h2>
-<table>
-<tr><th>Job</th><th>Status</th></tr>
-<tr><td>Market Scan</td><td>✅ Completed</td></tr>
-<tr><td>Morning Brief</td><td>✅ Sent to Jen</td></tr>
-<tr><td>Breaking Alert</td><td>🟡 Monitoring</td></tr>
-</table>
+<div class="modal-backdrop" id="editorModal">
+  <div class="modal">
+    <div class="modal-head"><div><h3 id="modalTitle">Add Item</h3><div class="muted">บันทึกไว้ในเบราว์เซอร์สำหรับ MVP</div></div><button class="close" id="closeModal">×</button></div>
+    <div class="form-grid" style="margin-top:16px">
+      <div class="field"><label>Name</label><input id="itemName"></div>
+      <div class="field"><label>Category</label><input id="itemCategory"></div>
+      <div class="field full"><label>URL / Notes</label><input id="itemValue"></div>
+      <div class="field"><label>Status</label><select id="itemStatus"><option value="active">Active</option><option value="paused">Paused</option></select></div>
+    </div>
+    <div class="form-actions"><button class="btn ghost" id="cancelModal">Cancel</button><button class="btn primary" id="saveItemBtn">Save</button></div>
+  </div>
 </div>
+<div class="toast" id="toast"></div>
 
-<div class="card" style="margin-top:18px">
-<h2>Research Prompt Template</h2>
-<p>Template used for <b>Continue Analysis</b> before opening ChatGPT.</p>
-</div>
-
-<p><a href="../">← Back to Workspace</a></p>
-</main>
-</div>
-</body>
-</html>
+<script>
+const STORE_KEY='jamAdminDataV1';
+const defaults={
+ sources:[{name:'Autodesk Newsroom',category:'Official',value:'https://www.autodesk.com/blogs/',status:'active'},{name:'ZWCAD Blog',category:'Competitor',value:'https://www.zwsoft.com/news',status:'active'}],
+ competitors:[{name:'Autodesk',category:'CAD/BIM',value:'Pricing, AI, product updates',status:'active'},{name:'ZWCAD',category:'CAD',value:'Promotion, pricing, campaigns',status:'active'}],
+ keywords:[{name:'AI CAD',category:'Trend',value:'AI assistant, smart automation',status:'active'},{name:'Price Increase',category:'Pricing',value:'price update, subscription increase',status:'active'}],
+ prompts:{
+  morningPrompt:'ค้นข่าวล่าสุดจากเว็บจริงตาม Sources และ Competitors ที่กำหนด คัดเฉพาะเรื่องที่มีผลต่อ CAD, BIM และ B2B Marketing สรุปเป็น Executive Summary, What Matters Today และ Suggested Actions',
+  alertPrompt:'ตรวจข่าวใหม่และแจ้งเฉพาะเรื่อง High Impact เช่น การขึ้นราคา ลดราคา เปิดตัวสินค้าใหม่ หรือการเปลี่ยนแปลงที่กระทบตลาดไทย',
+  researchPrompt:'Prepared by Jam\\n\\nResearch Topic: {{topic}}\\n\\nค้นเว็บจริง วิเคราะห์ผลกระทบต่อตลาด CAD/BIM ไทย เปรียบเทียบคู่แข่ง และเสนอ Marketing Actions พร้อมแหล่งอ้างอิง',
+  actionPrompt:'จากข่าวทั้งหมด สรุปสิ่งที่ทีมการตลาดควรทำต่อ แบ่งเป็น High, Medium และ Low Priority'
+ },
+ schedules:{briefTime:'08:00',monitorEnd:'18:00',alertThreshold:'high',sendJen:'yes'},
+ settings:{workspaceName:'Jam Market Intelligence',analystName:'Jam',appsScriptUrl:'',workspaceUrl:'https://marketing.alicetletech.com/jam',lineEnabled:'yes',themeSetting:'system'},
+ history:[{date:'2026-07-15 08:05',type:'Morning Brief',summary:'3 important updates',status:'Sent to Jen'},{date:'2026-07-15 11:42',type:'Breaking Alert',summary:'AutoCAD pricing update',status:'Delivered'}]
+};
+let data=loadData(),editorState={type:null,index:null};
+function cloneDefaults(){return JSON.parse(JSON.stringify(defaults))}
+function loadData(){try{const s=JSON.parse(localStorage.getItem(STORE_KEY));if(!s)return cloneDefaults();return {...cloneDefaults(),...s,prompts:{...defaults.prompts,...s.prompts},schedules:{...defaults.schedules,...s.schedules},settings:{...defaults.settings,...s.settings}}}catch(e){return cloneDefaults()}}
+function saveData(msg='Saved'){localStorage.setItem(STORE_KEY,JSON.stringify(data));renderAll();showToast(msg)}
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>toast.classList.remove('show'),2200)}
+function switchPanel(name){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.panel===name));document.getElementById('panel-'+name).classList.add('active');pageTitle.textContent=name.charAt(0).toUpperCase()+name.slice(1)}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>switchPanel(b.dataset.panel));document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>switchPanel(b.dataset.jump));
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function renderList(type,id){const el=document.getElementById(id);el.innerHTML='';data[type].forEach((it,i)=>{const r=document.createElement('div');r.className='row';r.innerHTML=`<div><div class="row-title">${esc(it.name)} <span class="badge ${it.status==='active'?'green':'amber'}">${it.status}</span></div><div class="row-meta">${esc(it.category)}${it.value?' · '+esc(it.value):''}</div></div><div class="row-actions"><button class="icon-btn edit-item" data-type="${type}" data-index="${i}">Edit</button><button class="icon-btn delete-item" data-type="${type}" data-index="${i}">Delete</button></div>`;el.appendChild(r)})}
+function renderAll(){
+ renderList('sources','sourcesList');renderList('competitors','competitorsList');renderList('keywords','keywordsList');statSources.textContent=data.sources.length;statCompetitors.textContent=data.competitors.length;
+ morningPrompt.value=data.prompts.morningPrompt;alertPrompt.value=data.prompts.alertPrompt;researchPrompt.value=data.prompts.researchPrompt;actionPrompt.value=data.prompts.actionPrompt;
+ Object.entries(data.schedules).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});Object.entries(data.settings).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});
+ historyBody.innerHTML=data.history.map(h=>`<tr><td>${esc(h.date)}</td><td>${esc(h.type)}</td><td>${esc(h.summary)}</td><td>${esc(h.status)}</td></tr>`).join('');
+}
+function openEditor(type,index=null){editorState={type,index};modalTitle.textContent=(index===null?'Add ':'Edit ')+({sources:'Source',competitors:'Competitor',keywords:'Keyword'}[type]);const it=index===null?{name:'',category:'',value:'',status:'active'}:data[type][index];itemName.value=it.name;itemCategory.value=it.category;itemValue.value=it.value;itemStatus.value=it.status;editorModal.classList.add('show')}
+function closeEditor(){editorModal.classList.remove('show')}
+document.querySelectorAll('.add-btn').forEach(b=>b.onclick=()=>openEditor(b.dataset.type));
+document.addEventListener('click',e=>{const ed=e.target.closest('.edit-item');if(ed)openEditor(ed.dataset.type,Number(ed.dataset.index));const del=e.target.closest('.delete-item');if(del&&confirm('Delete this item?')){data[del.dataset.type].splice(Number(del.dataset.index),1);saveData('Item deleted')}});
+saveItemBtn.onclick=()=>{const it={name:itemName.value.trim(),category:itemCategory.value.trim(),value:itemValue.value.trim(),status:itemStatus.value};if(!it.name){showToast('กรุณากรอกชื่อ');return}if(editorState.index===null)data[editorState.type].push(it);else data[editorState.type][editorState.index]=it;closeEditor();saveData('Item saved')};
+closeModal.onclick=cancelModal.onclick=closeEditor;editorModal.onclick=e=>{if(e.target===editorModal)closeEditor()};
+document.querySelectorAll('.save-prompt').forEach(b=>b.onclick=()=>{data.prompts[b.dataset.key]=document.getElementById(b.dataset.key).value;saveData('Prompt saved')});
+saveScheduleBtn.onclick=()=>{data.schedules={briefTime:briefTime.value,monitorEnd:monitorEnd.value,alertThreshold:alertThreshold.value,sendJen:sendJen.value};saveData('Schedule saved')};
+saveSettingsBtn.onclick=()=>{data.settings={workspaceName:workspaceName.value,analystName:analystName.value,appsScriptUrl:appsScriptUrl.value,workspaceUrl:workspaceUrl.value,lineEnabled:lineEnabled.value,themeSetting:themeSetting.value};saveData('Settings saved')};
+clearHistoryBtn.onclick=()=>{if(confirm('Clear all history?')){data.history=[];saveData('History cleared')}};
+saveAllBtn.onclick=()=>saveData('All settings saved');
+exportBtn.onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='jam-admin-config.json';a.click();URL.revokeObjectURL(u)};
+renderAll();
+</script>
+</body></html>
